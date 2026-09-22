@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vídeos de apoio | Negociação Estratégica</title>
+<style>
+  :root {
+    --navy: #14264C;
+    --navy-2: #1E3566;
+    --gold: #C9A227;
+    --gold-ink: #7A5F08;
+    --ink: #111827;
+    --muted: #374151;
+    --line: #D5DAE5;
+    --paper: #FFFFFF;
+    --tint: #EEF1F7;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Cambria, Caladea, "Liberation Serif", Georgia, serif;
+    font-size: 18px;
+    line-height: 1.5;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: calc(40px + env(safe-area-inset-top, 0px)) 24px 36px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  header p.curso { color: var(--gold); font-weight: bold; margin: 0 0 6px; font-size: 17px; }
+  header h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.1; margin: 0 0 14px; }
+  header p.intro { max-width: 62ch; margin: 0; color: #E5E7EB; }
+  .play:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  main { padding: 8px 24px 48px; }
+  section.bloco { margin-top: 40px; }
+  section.bloco h2 {
+    color: var(--navy); font-size: 26px; margin: 0 0 4px;
+  }
+  section.bloco > .wrap > p { color: var(--muted); margin: 0 0 20px; max-width: 62ch; }
+  .grade {
+    display: grid; gap: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  }
+  article { display: flex; flex-direction: column; }
+  article[hidden] { display: none; }
+  .tela {
+    position: relative; width: 100%; aspect-ratio: 9 / 16;
+    background: var(--navy); border-radius: 10px; overflow: hidden;
+  }
+  .tela iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .play {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    border: 0; cursor: pointer; background: var(--navy);
+    color: #fff; font: inherit; text-align: left;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 20px;
+  }
+  .play .num { font-size: 72px; font-weight: bold; color: var(--gold); line-height: 1; }
+    .play .acao {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 17px; font-weight: bold;
+  }
+  .play .acao .circ {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--gold);
+    display: inline-flex; align-items: center; justify-content: center; flex: none;
+  }
+  .play .acao .circ::before {
+    content: ""; margin-left: 4px;
+    border-left: 15px solid var(--navy); border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+  }
+  .play:hover { background: var(--navy-2); }
+  .info { padding-top: 12px; }
+  .info h3 { margin: 0; font-size: 21px; color: var(--navy); line-height: 1.2; }
+  .info p { margin: 6px 0 8px; font-size: 16px; color: var(--muted); }
+  .info a { color: var(--navy); font-size: 15px; font-weight: bold; }
+  footer { border-top: 1px solid var(--line); padding: 20px 24px 32px; color: var(--muted); font-size: 15px; }
+  @media (prefers-reduced-motion: no-preference) { .play { transition: background .15s; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="curso">Negociação Estratégica</p>
+    <h1>Vídeos de apoio</h1>
+    <p class="intro">Dezessete vídeos curtos, de cerca de um minuto e meio cada, com as técnicas trabalhadas em sala.</p>
+  </div>
+</header>
+
+<main id="lista"></main>
+
+<footer>
+  <div class="wrap">Prof. Dr. Thiago Lima. Os vídeos são apresentados pelo avatar do professor, criado com inteligência artificial. O conteúdo é do curso de Negociação Estratégica.</div>
+</footer>
+
+<script>
+const BLOCOS = [
+  { titulo: "Conflito, influência e confiança", texto: "A base: como lidar com a divergência e por que a confiança pesa mais que os argumentos.", videos: [
+    { id: "f2e68030dbcd4047b6c8e0600e051acc", t: "Método OUVIR", d: "Cinco passos para lidar com o conflito sem ceder rápido nem travar." },
+    { id: "ab9b7551fb6a4cf59d87b8270ae0a5f9", t: "A equação da influência", d: "Influência é persuasão dividida por resistência." },
+    { id: "3380c90d88cc498784827badedcc40f8", t: "Confiança", d: "Autenticidade, lógica e empatia: os três pilares." },
+    { id: "26dfd1fdbefe41919fedb6f8c40fce84", t: "Senso de justiça", d: "A frase que trava a negociação e como evitá-la." }
+  ]},
+  { titulo: "Técnicas de escuta", texto: "Como fazer o outro lado falar e revelar o que está por trás da posição.", videos: [
+    { id: "c7cd6eb2dea84616be713384bf4677e9", t: "Perguntas calibradas", d: "Troque o \u201cpor que\u201d por \u201co que\u201d e \u201ccomo\u201d." },
+    { id: "973478c32ad04778a413945b745be897", t: "Espelhamento", d: "Repita as últimas palavras e deixe o outro continuar." },
+    { id: "a78327cfde0241f6a5782b5ab68ac270", t: "Rotulagem", d: "Dê nome à emoção para baixar a tensão." },
+    { id: "cd5d0f40ce0c40369c90e96ab93e6f68", t: "Auditoria de acusações", d: "Antecipe as críticas que o fornecedor já traz para a mesa." },
+    { id: "8cbe1a53fc394d4db4f901230da455b6", t: "O poder do não", d: "Perguntas de \u201cnão\u201d trazem mais informação que as de \u201csim\u201d." }
+  ]},
+  { titulo: "Táticas de proposta", texto: "Como fazer ofertas, conceder e ordenar os argumentos.", videos: [
+    { id: "d44af6266a974b888ffbcb520fe9e207", t: "Reciprocidade", d: "Nunca conceda sem pedir algo em troca." },
+    { id: "121604b26dc841f39e5592856588370b", t: "Aversão à perda", d: "A mesma proposta pesa mais quando mostra o que se perde." },
+    { id: "035d74472daa4b9ab4e89fd4386084c2", t: "Ancoragem", d: "Quem deve fazer a primeira oferta, e quando." },
+    { id: "f54e21a65a0d42cfbd56746d583d3056", t: "A sequência dos argumentos", d: "A ordem em que você apresenta muda o peso do que diz." }
+  ]},
+  { titulo: "Confiança e preparo", texto: "Como avaliar e construir a confiança, e como se preparar antes da mesa.", videos: [
+    { id: "58c28997cc954cb58050d07eef50e659", t: "Os seis sinais de confiança", d: "Como avaliar se a outra parte é confiável." },
+    { id: "7d4d6a19b56e4283837fd170baec035a", t: "O código da confiança", d: "Cinco princípios para se tornar a pessoa em quem o outro lado confia." },
+    { id: "9f4acb3890664baf86c2ab819ed463a2", t: "A história que você conta a si mesmo", d: "Separe o que observou do que inferiu." },
+    { id: "24a0c41610de438ea9a421e77371c193", t: "O sistema de Ackerman", d: "Como conduzir a fase final do preço." }
+  ]}
+];
+
+const main = document.getElementById("lista");
+let n = 0;
+BLOCOS.forEach(b => {
+  const sec = document.createElement("section");
+  sec.className = "bloco";
+  const wrap = document.createElement("div");
+  wrap.className = "wrap";
+  wrap.innerHTML = `<h2>${b.titulo}</h2><p>${b.texto}</p>`;
+  const grade = document.createElement("div");
+  grade.className = "grade";
+  b.videos.forEach(v => {
+    n += 1;
+    const art = document.createElement("article");
+    art.innerHTML = `
+      <div class="tela">
+        <button class="play" type="button" aria-label="Assistir: ${v.t}">
+          <span class="num">${n}</span>
+          <span class="acao"><span class="circ" aria-hidden="true"></span>Assistir</span>
+        </button>
+      </div>
+      <div class="info">
+        <h3>${v.t}</h3>
+        <p>${v.d}</p>
+        <a href="https://app.heygen.com/videos/${v.id}" target="_blank" rel="noopener">Abrir em outra aba</a>
+      </div>`;
+    art.querySelector(".play").addEventListener("click", e => {
+      const tela = e.currentTarget.parentElement;
+      tela.innerHTML = `<iframe src="https://app.heygen.com/embeds/${v.id}" title="${v.t}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    });
+    grade.appendChild(art);
+  });
+  wrap.appendChild(grade);
+  sec.appendChild(wrap);
+  main.appendChild(sec);
+});
+
+</script>
+</body>
+</html>

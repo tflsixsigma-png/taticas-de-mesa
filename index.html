@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#14264C">
+<title>Táticas de mesa</title>
+<style>
+  :root {
+    --navy: #14264C; --navy-deep: #0D1A36; --gold: #C9A227; --gold-ink: #7A5F08;
+    --ink: #111827; --muted: #4B5563; --line: #D5DAE5; --paper: #FFFFFF; --tint: #EEF1F7;
+    --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: Cambria, Caladea, "Liberation Serif", Georgia, serif;
+    font-size: 18px; line-height: 1.45;
+    display: flex; flex-direction: column;
+  }
+  header {
+    background: var(--navy); color: #fff; padding: calc(14px + var(--sat)) 20px 14px;
+    display: flex; align-items: center; gap: 12px; flex: none;
+  }
+  header h1 { font-size: 22px; margin: 0; flex: 1; line-height: 1.2; }
+  header .back { background: none; border: 0; color: var(--gold); font: inherit; font-size: 18px; font-weight: bold; padding: 6px 4px; cursor: pointer; display: none; }
+  main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .view { display: none; } .view.on { display: block; }
+  nav {
+    flex: none; display: flex; border-top: 2px solid var(--line); background: var(--paper);
+    padding-bottom: var(--sab);
+  }
+  nav button {
+    flex: 1; border: 0; background: none; font: inherit; font-size: 15px; font-weight: bold;
+    color: var(--muted); padding: 12px 0 10px; cursor: pointer;
+  }
+  nav button[aria-current="page"] { color: var(--navy); box-shadow: inset 0 3px 0 var(--gold); }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  /* lista */
+  .lista { padding: 8px 0 24px; }
+  .lista h2.grupo { font-size: 15px; color: var(--gold-ink); margin: 22px 20px 6px; }
+  .lista p.intro { padding: 12px 20px 6px; margin: 0; color: var(--muted); font-size: 16px; }
+  .tat {
+    display: flex; align-items: center; width: 100%; gap: 14px;
+    padding: 16px 20px; border: 0; border-bottom: 1px solid var(--line);
+    background: none; text-align: left; font: inherit; cursor: pointer;
+  }
+  .tat .tx { flex: 1; }
+  .tat .nome { font-size: 21px; font-weight: bold; color: var(--navy); }
+  .tat .quando { font-size: 15px; color: var(--muted); margin-top: 2px; }
+  .estrela {
+    flex: none; width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line);
+    background: none; font-size: 22px; color: var(--line); cursor: pointer;
+  }
+  .estrela[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+
+  /* detalhe */
+  .seg { display: flex; margin: 16px 20px 0; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
+  .seg button { flex: 1; border: 0; background: none; font: inherit; font-weight: bold; font-size: 16px; padding: 10px; color: var(--navy); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .painel { display: none; } .painel.on { display: block; }
+
+  .mesa { background: var(--navy); color: #fff; margin: 16px 0 0; padding: 22px 20px 28px; }
+  .mesa .quando { color: var(--gold); font-size: 17px; margin: 0 0 18px; }
+  .mesa .fala { font-size: 26px; line-height: 1.3; margin: 0 0 18px; padding-left: 16px; border-left: 4px solid var(--gold); }
+  .mesa .evite { margin-top: 26px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.25); }
+  .mesa .evite p { margin: 0 0 6px; font-size: 17px; color: #E5E7EB; }
+  .mesa .evite p b { color: #fff; }
+  .bloco { padding: 18px 20px; }
+  .bloco h2 { font-size: 18px; color: var(--navy); margin: 0 0 8px; }
+  .bloco p { margin: 0 0 10px; }
+  .bloco ul { margin: 0; padding-left: 20px; } .bloco li { margin-bottom: 8px; }
+  textarea {
+    width: 100%; min-height: 90px; font: inherit; font-size: 17px; padding: 10px 12px;
+    border: 2px solid var(--line); border-radius: 8px; resize: vertical; color: var(--ink);
+  }
+  textarea:focus { border-color: var(--navy); }
+  .salvo { font-size: 14px; color: var(--muted); margin: 6px 0 0; min-height: 1.2em; }
+  .tela { position: relative; width: 100%; max-width: 360px; aspect-ratio: 9/16; background: var(--navy); border-radius: 10px; overflow: hidden; margin: 4px auto 10px; }
+  .tela iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .play { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--navy); color: #fff; font: inherit; font-size: 20px; font-weight: bold; cursor: pointer; }
+  .play::before { content: ""; display: block; width: 0; height: 0; margin: 0 auto 14px; border-left: 28px solid var(--gold); border-top: 18px solid transparent; border-bottom: 18px solid transparent; }
+  .link { color: var(--navy); font-weight: bold; font-size: 15px; }
+  .btn {
+    display: inline-block; font: inherit; font-weight: bold; font-size: 16px; padding: 12px 20px;
+    border-radius: 999px; border: 2px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer;
+  }
+  .btn.claro { background: none; color: var(--navy); }
+  .btn.ouro { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+
+  /* minha mesa */
+  .vazio { padding: 40px 20px; text-align: center; color: var(--muted); }
+  .minha .mesa { margin: 0; border-bottom: 1px solid rgba(255,255,255,.2); padding-top: 18px; padding-bottom: 20px; }
+  .minha .mesa h2 { margin: 0 0 4px; font-size: 20px; color: #fff; }
+  .minha .mesa .fala { font-size: 23px; margin-bottom: 12px; }
+  .minha .mesa .nota { color: var(--gold); font-size: 17px; margin: 8px 0 0; padding-left: 16px; }
+  @media (prefers-reduced-motion: no-preference) { .estrela, .seg button, nav button { transition: background .15s, color .15s; } }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="back" id="back" type="button" aria-label="Voltar">‹ Táticas</button>
+  <h1 id="titulo">Táticas de mesa</h1>
+</header>
+
+<main>
+  <section class="view on" id="v-lista">
+    <div class="lista">
+      <p class="intro">Dezessete táticas. Toque numa para estudar ou consultar. Marque com a estrela as que vai levar para a próxima mesa.</p>
+      <div id="lista"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-detalhe"></section>
+
+  <section class="view" id="v-minha"></section>
+</main>
+
+<nav aria-label="Seções">
+  <button type="button" data-v="lista" aria-current="page">Táticas</button>
+  <button type="button" data-v="minha">Minha mesa</button>
+</nav>
+
+<script>
+const T = [
+  // ---- Escutar e desarmar ----
+  { g: "Escutar e desarmar", id: "calibradas", nome: "Perguntas calibradas",
+    quando: "Quando você precisa entender o que está por trás de uma posição.",
+    falas: ["O que torna necessário esse prazo?", "Como vocês chegaram a esse valor?", "O que precisaria acontecer para isso funcionar?", "Como eu consigo fazer isso?"],
+    evite: [["Por que vocês precisam disso?", "soa como cobrança e gera defesa."], ["Vocês conseguem fazer em 30 dias?", "pergunta fechada: a resposta é sim ou não, e a conversa para."]],
+    resumo: "Perguntas abertas, que começam com \u201co que\u201d ou \u201ccomo\u201d, levam a outra parte a explicar em vez de se defender. Elas transferem para o outro lado o trabalho de encontrar a solução, sem dizer não. Depois de perguntar, espere a resposta completa.",
+    preparo: ["Liste as posições da outra parte que você não entende.", "Escreva uma pergunta com \u201co que\u201d ou \u201ccomo\u201d para cada uma.", "Verifique se alguma começa com \u201cpor que\u201d e reescreva."],
+    video: "c7cd6eb2dea84616be713384bf4677e9" },
+  { g: "Escutar e desarmar", id: "espelho", nome: "Espelhamento",
+    quando: "Quando a resposta veio curta ou evasiva e você quer que o outro continue falando.",
+    falas: ["Difícil de manter?", "Prazo apertado?", "(repita as duas ou três últimas palavras, em tom de pergunta, e fique em silêncio)"],
+    evite: [["Difícil como? É o preço?", "não é espelho: é pergunta nova que sugere a resposta."], ["Propor solução antes de o problema aparecer", "fecha a porta da informação."]],
+    resumo: "Repetir as últimas palavras do outro lado, em tom de pergunta, mostra que você está ouvindo e convida a continuar. O segredo é o silêncio depois do espelho: conte até três antes de falar. É a forma mais barata de fazer a outra parte revelar o que está por trás da frase.",
+    preparo: ["Decida que vai espelhar as três primeiras frases vagas que ouvir.", "Combine com você mesmo o silêncio de três segundos."],
+    video: "973478c32ad04778a413945b745be897" },
+  { g: "Escutar e desarmar", id: "rotulo", nome: "Rotulagem",
+    quando: "Quando a emoção da outra parte está travando a conversa.",
+    falas: ["Parece que esse prazo é o ponto mais sensível para vocês.", "Parece que você está sob muita pressão.", "Parece que esse atraso colocou você numa situação difícil."],
+    evite: [["Eu sinto que você está nervoso", "coloca o foco em quem fala."], ["Calma, vamos resolver", "minimiza a emoção e irrita mais."]],
+    resumo: "Dar nome à emoção que você percebe, começando com \u201cparece que\u201d, reduz a intensidade dela e mostra atenção ao outro lado. Depois do rótulo, fique em silêncio e deixe o efeito acontecer. Não se justifique: explicar o processo nesse momento soa como defesa.",
+    preparo: ["Antecipe qual emoção a outra parte deve trazer para a mesa.", "Escreva um rótulo com \u201cparece que\u201d para ela."],
+    video: "a78327cfde0241f6a5782b5ab68ac270" },
+  { g: "Escutar e desarmar", id: "auditoria", nome: "Auditoria de acusações",
+    quando: "Na abertura, antes de a outra parte dizer o que pensa de você.",
+    falas: ["Vocês devem estar achando que só vamos discutir preço.", "Vocês devem estar achando que o nosso processo é burocrático demais.", "Você deve estar pensando que estamos pedindo muito e oferecendo pouco em troca."],
+    evite: [["Quero deixar claro que o nosso processo é justo", "soa como defesa antecipada."], ["Sei que vocês reclamam, mas as normas exigem", "o \u201cmas\u201d anula a antecipação."]],
+    resumo: "Toda negociação começa com críticas que ninguém diz em voz alta. Quando você as diz primeiro, elas perdem força, e a outra parte costuma responder \u201cnão é bem assim\u201d. Depois de dizer, fique em silêncio. Não emende explicação nem peça desculpas.",
+    preparo: ["Liste tudo de negativo que a outra parte pode pensar sobre você, sua proposta e sua organização.", "Escolha as duas ou três acusações mais prováveis.", "Escreva a frase de abertura com cada uma."],
+    video: "cd5d0f40ce0c40369c90e96ab93e6f68" },
+  { g: "Escutar e desarmar", id: "nao", nome: "O poder do não",
+    quando: "Quando você quer uma resposta em que o outro lado se compromete de verdade.",
+    falas: ["É um momento ruim para conversarmos?", "Você discorda de algum ponto?", "Tem alguma coisa nessa proposta que não funciona para vocês?", "Vocês desistiram desse projeto?"],
+    evite: [["Você concorda com isso?", "convida um sim que só encerra o assunto."], ["Podemos fechar hoje, certo?", "pressiona pelo sim, e esse sim não se sustenta."]],
+    resumo: "Dizer não faz a pessoa se sentir segura e no controle. Por isso, perguntas que podem ser respondidas com um não trazem mais informação do que as que pedem um sim. Desconfie do sim fácil e trate o não como começo de conversa, e não como fim.",
+    preparo: ["Reescreva as perguntas que você pretende fazer para que possam ser respondidas com um não.", "Decida o que vai perguntar quando ouvir o primeiro não."],
+    video: "8cbe1a53fc394d4db4f901230da455b6" },
+  { g: "Escutar e desarmar", id: "ouvir", nome: "Método OUVIR",
+    quando: "Quando a divergência aparece e você quer manter a abertura sem perder a firmeza.",
+    falas: ["Entendo que existe outra forma legítima de ver esse problema.", "Nós dois concordamos que isso precisa ser decidido logo.", "Um ponto que eu valorizo muito nessa proposta é...", "O que torna isso importante para vocês?", "Uma forma de ver o problema é..."],
+    evite: [["Eu não gostei disso", "linguagem negativa fecha a conversa."], ["Tenho certeza absoluta de que estou certo", "não deixa espaço para o outro lado."]],
+    resumo: "Olhar a perspectiva do outro, Unir pontos em comum, Valorizar o positivo, Investigar o que está por trás da posição e Relativizar as próprias afirmações. Com essa linguagem, a outra parte passa a ver você como alguém disposto a ouvir, e quem se sente ouvido também se abre.",
+    preparo: ["Escreva um ponto em comum com a outra parte, mesmo pequeno.", "Escreva um ponto que você valoriza na posição dela."],
+    video: "f2e68030dbcd4047b6c8e0600e051acc" },
+
+  // ---- Propor e conceder ----
+  { g: "Propor e conceder", id: "reciprocidade", nome: "Reciprocidade",
+    quando: "Toda vez que você for ceder em alguma coisa.",
+    falas: ["Se vocês fecharem por dois anos, então eu consigo reduzir o preço.", "Consigo ajustar o prazo. O que vocês conseguem fazer no volume?", "Isso custa para nós. Em troca, precisamos de..."],
+    evite: [["Tudo bem, podemos mudar", "concessão de graça: não gera nada em troca e ensina que pedir basta."]],
+    resumo: "Ceder sem pedir nada em troca abre precedente e passa a imagem de presa fácil. Toda concessão vem acompanhada de um pedido, na fórmula \u201cse... então\u201d. Ceda no que custa pouco para você e vale muito para o outro lado, e deixe claro o que a concessão custou.",
+    preparo: ["Liste o que você pode ceder, do mais barato ao mais caro.", "Para cada item, escreva o que vai pedir em troca."],
+    video: "d44af6266a974b888ffbcb520fe9e207" },
+  { g: "Propor e conceder", id: "ancoragem", nome: "Ancoragem",
+    quando: "Na hora de decidir quem fala o primeiro número.",
+    falas: ["Com base na faixa de mercado e no histórico do contrato, a nossa referência é...", "Antes de falarmos em valores, o que vocês consideram para formar esse preço?", "Esse número está longe dos nossos critérios. Vamos voltar ao que sustenta a proposta."],
+    evite: [["Fazer a contraproposta perto do número do outro", "você aceitou a âncora dele."], ["Abrir com um número sem justificativa", "parece um chute e será cortado pela metade."]],
+    resumo: "O primeiro número tende a servir de referência para toda a conversa. Se você conhece o valor, ancore primeiro, com uma oferta ambiciosa que consiga justificar. Se há muita incerteza, deixe o outro abrir e use a oferta dele como informação. Ancorar é questão de informação, não de coragem.",
+    preparo: ["Anote quanta informação você tem sobre o valor de mercado e sobre a outra parte.", "Se for ancorar, escreva o número e o critério que o sustenta."],
+    video: "035d74472daa4b9ab4e89fd4386084c2" },
+  { g: "Propor e conceder", id: "perda", nome: "Aversão à perda",
+    quando: "Na hora de apresentar a proposta ou convencer quem decide.",
+    falas: ["Sem essa mudança, vocês continuam perdendo quinze por cento ao ano.", "Se o contrato terminar sem plano de transição, o atendimento para.", "O que vocês deixam de ter se isso não fechar?"],
+    evite: [["Exagerar a perda", "se o outro lado perceber, você perde a confiança."], ["Perdas vagas", "não mobilizam ninguém: diga quanto, quando e onde."]],
+    resumo: "As pessoas se esforçam mais para evitar uma perda do que para obter um ganho do mesmo tamanho. A mesma proposta pode ser apresentada como ganho ou como perda, e o efeito muda. Mostre o que o outro lado perde se nada mudar, de forma concreta e real.",
+    preparo: ["Reescreva o principal ganho da sua proposta como uma perda evitada.", "Coloque números e prazos na perda."],
+    video: "121604b26dc841f39e5592856588370b" },
+  { g: "Propor e conceder", id: "sequencia", nome: "A sequência dos argumentos",
+    quando: "Antes de apresentar mais de um argumento.",
+    falas: ["(todos fortes) Apresente um, faça uma pausa e deixe o outro reagir antes do próximo.", "(todos frágeis) Apresente todos juntos, numa única frase.", "(pesos diferentes) Abra com um bom, coloque o frágil no meio e feche com o melhor."],
+    evite: [["Abrir com o argumento mais fraco", "reduz a atenção que o outro dará aos seguintes."], ["Abrir com o melhor", "o resto da conversa vira ladeira abaixo."]],
+    resumo: "Muitas vezes o problema não está no que você diz, mas na ordem. Argumentos fortes precisam de espaço para pesar sozinhos. Argumentos frágeis ganham na quantidade. Quando os pesos são diferentes, o melhor fica para o final.",
+    preparo: ["Liste os seus argumentos e classifique cada um como forte ou frágil.", "Defina a ordem conforme a regra do caso."],
+    video: "f54e21a65a0d42cfbd56746d583d3056" },
+  { g: "Propor e conceder", id: "ackerman", nome: "Sistema de Ackerman",
+    quando: "Só na fase final, quando resta negociar o preço.",
+    falas: ["(alvo 100) Abra em 65, depois 85, depois 95, e feche em 100 com número quebrado.", "Antes de subir: como eu consigo chegar a esse valor?", "Consigo fechar em noventa e nove mil, oitocentos e setenta, com o prazo de pagamento ampliado."],
+    evite: [["Usar cedo", "transforma a mesa em disputa de preço e fecha a porta das trocas."], ["Saltos iguais ou crescentes", "sinalizam que ainda há muito espaço."]],
+    resumo: "Defina o alvo. Abra em 65 por cento dele e suba em 85, 95 e 100, com incrementos decrescentes, que sinalizam o seu limite. Entre uma oferta e outra, use perguntas calibradas em vez de novo número. Feche com um valor quebrado e acrescente um item não monetário.",
+    preparo: ["Defina o seu alvo e calcule 65, 85 e 95 por cento dele.", "Escreva a justificativa da primeira oferta e escolha o item extra do fechamento."],
+    video: "24a0c41610de438ea9a421e77371c193" },
+
+  // ---- Confiança e preparo ----
+  { g: "Confiança e preparo", id: "influencia", nome: "A equação da influência",
+    quando: "Quando a negociação travou e você está tentado a argumentar mais.",
+    falas: ["O que está gerando resistência do lado de vocês?", "Que parte dessa proposta não faz sentido para vocês?", "O que precisaria estar atendido para isso avançar?"],
+    evite: [["Mais argumentos, mais dados, mais pressão", "pressão aumenta a resistência, e a influência cai."]],
+    resumo: "Influência é persuasão dividida por resistência. Três fatores mexem na conta: interesses atendidos, raciocínio que faz sentido para o outro e relacionamento de confiança. Muitas vezes, o caminho mais curto para influenciar não é falar mais, e sim reduzir o que está travando o outro lado.",
+    preparo: ["Anote o que pode estar gerando resistência do outro lado.", "Comece a preparação por aí, e não pelos seus argumentos."],
+    video: "ab9b7551fb6a4cf59d87b8270ae0a5f9" },
+  { g: "Confiança e preparo", id: "confianca", nome: "Confiança",
+    quando: "Quando a outra parte parece não acreditar em você ou na sua proposta.",
+    falas: ["Me ajuda a entender o que preocupa vocês nesse ponto.", "Quero que isso funcione para os dois lados. O que faltaria para vocês?", "Esse é o raciocínio por trás do número. Faz sentido para vocês?"],
+    evite: [["Falar só dos seus argumentos", "é o jeito mais comum de abalar o pilar da empatia."]],
+    resumo: "A confiança se apoia em três pilares: autenticidade, lógica e empatia. Quando ela falha, quase sempre um pilar está abalado, e o mais comum é a empatia: ficamos tão focados nos nossos argumentos que deixamos de mostrar interesse pelos motivos do outro lado.",
+    preparo: ["Pergunte-se em qual dos três pilares você perderia pontos com essa contraparte.", "Prepare uma pergunta que mostre interesse pelos objetivos dela."],
+    video: "3380c90d88cc498784827badedcc40f8" },
+  { g: "Confiança e preparo", id: "justica", nome: "Senso de justiça",
+    quando: "Na abertura, e sempre que a palavra \u201cjusto\u201d aparecer na mesa.",
+    falas: ["Minha intenção é tratar vocês de forma justa. Se em algum momento acharem que fui injusto, me avisem, e a gente corrige.", "Onde fomos injustos? Me mostra, estamos abertos a entender."],
+    evite: [["Eu só quero o que é justo", "insinua que o outro lado está sendo injusto."], ["A nossa proposta é justa", "devolve a acusação e escala o conflito."]],
+    resumo: "As pessoas recusam acordos bons para elas quando se sentem tratadas de forma injusta. Traga a justiça para a mesa logo no início, e, se alguém disser que você foi injusto, não se defenda: pergunte onde. Quem cuida do senso de justiça cria um acordo que a outra parte cumpre.",
+    preparo: ["Prepare a frase de abertura sobre justiça.", "Identifique o ponto da sua proposta que pode parecer injusto ao outro lado."],
+    video: "26dfd1fdbefe41919fedb6f8c40fce84" },
+  { g: "Confiança e preparo", id: "sinais", nome: "Os seis sinais de confiança",
+    quando: "Antes da mesa, ao avaliar se pode contar com a outra parte.",
+    falas: ["Investimento: ela se interessa pelo meu sucesso?", "Longevidade: ela enxerga longo prazo comigo?", "Confiabilidade: tem competência e disposição para entregar?", "Ações: o passado confirma o que ela diz?", "Linguagem: ela pede minha opinião e oferece opções?", "Estabilidade: sob pressão, mantém a calma?"],
+    evite: [["Exigir os seis sinais", "dois ou três sinais fortes já dizem muito."], ["Encerrar a negociação quando um sinal falta", "proteja-se naquele ponto, com prazos, garantias ou marcos."]],
+    resumo: "Em vez de perguntar \u201cposso confiar?\u201d, pergunte \u201cconsigo prever como ela vai agir?\u201d. Os seis sinais ajudam a responder. Quando um sinal falta, você não encerra a negociação: protege-se naquele ponto.",
+    preparo: ["Para a sua contraparte, marque quais dos seis sinais você já observou.", "Para os que faltam, defina a proteção: prazo, garantia ou marco de entrega."],
+    video: "58c28997cc954cb58050d07eef50e659" },
+  { g: "Confiança e preparo", id: "codigo", nome: "O código da confiança",
+    quando: "Durante toda a conversa, como postura.",
+    falas: ["Suspenda o ego: o foco da conversa é o outro lado.", "Não julgue: entenda antes de avaliar.", "Valide: reconheça as pressões da outra parte, mesmo sem concordar.", "Honre a razão: diga o que quer e por quê, sem jogo escondido.", "Seja generoso com tempo, atenção e informação útil."],
+    evite: [["Confundir generosidade com concessão de graça", "generosidade aqui é de atenção, não de preço."]],
+    resumo: "Confiança não se pede. Ela surge quando a outra parte percebe que a conversa também é sobre ela, e não só sobre você. Os cinco princípios são uma postura para toda a conversa, não uma técnica pontual.",
+    preparo: ["Anote quanto tempo você pretende falar dos objetivos da outra parte.", "Escolha o princípio em que você mais costuma falhar e o vigie na mesa."],
+    video: "7d4d6a19b56e4283837fd170baec035a" },
+  { g: "Confiança e preparo", id: "historia", nome: "A história que você conta a si mesmo",
+    quando: "Antes da reunião, quando você já concluiu algo sobre a outra parte.",
+    falas: ["O que eu observei? Só o fato.", "O que eu inferi? A interpretação que acrescentei.", "Qual é o ponto de vista deles? Duas razões possíveis do lado de lá."],
+    evite: [["Negociar contra a história, e não contra os fatos", "é o erro mais caro da preparação."]],
+    resumo: "A história mais perigosa é a que você conta a si mesmo sobre a outra parte. Deixe os sentimentos de fora e não suponha informação: colete. Anote uma coisa que a outra parte fez e três razões possíveis, uma do seu ponto de vista e duas do dela. As duas últimas são as mais difíceis, e é nelas que estão as perguntas que você precisa fazer.",
+    preparo: ["Anote uma coisa que a outra parte fez.", "Escreva uma razão do seu ponto de vista e duas do ponto de vista dela.", "Transforme as duas últimas em perguntas para a mesa."],
+    video: "9f4acb3890664baf86c2ab819ed463a2" }
+];
+
+const KEY = "negociacao-taticas-v1";
+let S = { picks: [], notes: {}, debrief: "" };
+try { S = Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let atual = null;
+
+function show(v, titulo) {
+  document.querySelectorAll(".view").forEach(x => x.classList.toggle("on", x.id === "v-" + v));
+  document.querySelectorAll("nav button").forEach(b => {
+    const on = b.dataset.v === v || (v === "detalhe" && b.dataset.v === "lista");
+    if (on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  $("#titulo").textContent = titulo || (v === "minha" ? "Minha mesa" : "Táticas de mesa");
+  $("#back").style.display = v === "detalhe" ? "block" : "none";
+  $("main").scrollTop = 0;
+}
+
+function estrela(t) {
+  const on = S.picks.includes(t.id);
+  return `<button class="estrela" type="button" data-pick="${t.id}" aria-pressed="${on}" aria-label="Levar ${esc(t.nome)} para a mesa">★</button>`;
+}
+function renderLista() {
+  let g = "";
+  $("#lista").innerHTML = T.map(t => (t.g !== g ? `<h2 class="grupo">${(g = t.g)}</h2>` : "") + `
+    <div style="display:flex;align-items:center;border-bottom:1px solid var(--line)">
+      <button class="tat" type="button" data-open="${t.id}" style="border:0">
+        <span class="tx"><span class="nome">${esc(t.nome)}</span><br><span class="quando">${esc(t.quando)}</span></span>
+      </button>
+      <span style="padding-right:16px">${estrela(t)}</span>
+    </div>`).join("");
+}
+
+function renderDetalhe(t, modo) {
+  atual = t;
+  const nota = S.notes[t.id] || "";
+  $("#v-detalhe").innerHTML = `
+    <div class="seg" role="group" aria-label="Modo">
+      <button type="button" data-modo="mesa" aria-pressed="${modo === "mesa"}">Na mesa</button>
+      <button type="button" data-modo="estudo" aria-pressed="${modo === "estudo"}">Estudar</button>
+    </div>
+    <div class="painel ${modo === "mesa" ? "on" : ""}" id="p-mesa">
+      <div class="mesa">
+        <p class="quando">${esc(t.quando)}</p>
+        ${t.falas.map(f => `<p class="fala">${esc(f)}</p>`).join("")}
+        <div class="evite">${t.evite.map(e => `<p><b>Evite:</b> \u201c${esc(e[0])}\u201d, ${esc(e[1])}</p>`).join("")}</div>
+      </div>
+      <div class="bloco">
+        <h2>Minhas frases</h2>
+        <textarea id="nota" placeholder="Escreva aqui as frases do seu jeito, para a sua próxima mesa.">${esc(nota)}</textarea>
+        <p class="salvo" id="salvo"></p>
+        <p style="margin-top:14px">${estrela(t)} <span style="font-size:16px;color:var(--muted);vertical-align:middle">Levar para a próxima mesa</span></p>
+      </div>
+    </div>
+    <div class="painel ${modo === "estudo" ? "on" : ""}" id="p-estudo">
+      <div class="bloco">
+        <h2>A técnica</h2>
+        <p>${t.resumo}</p>
+      </div>
+      <div class="bloco" style="background:var(--tint)">
+        <h2>Antes da mesa</h2>
+        <ul>${t.preparo.map(p => `<li>${p}</li>`).join("")}</ul>
+      </div>
+      ${t.video ? `<div class="bloco">
+        <h2>O vídeo</h2>
+        <div class="tela"><button class="play" type="button" data-video="${t.video}" data-t="${esc(t.nome)}">Assistir</button></div>
+        <a class="link" href="https://app.heygen.com/videos/${t.video}" target="_blank" rel="noopener">Abrir em outra aba</a>
+      </div>` : `<div class="bloco"><h2>O vídeo</h2><p style="color:var(--muted)">Vídeo em produção.</p></div>`}
+    </div>`;
+  show("detalhe", t.nome);
+}
+
+function renderMinha() {
+  const picks = T.filter(t => S.picks.includes(t.id));
+  const el = $("#v-minha");
+  if (!picks.length) {
+    el.innerHTML = `<div class="vazio"><p>Nenhuma tática marcada.</p><p>Na lista, toque na estrela das duas ou três táticas que vai usar na próxima mesa. Elas aparecem aqui, em letra grande, para consulta rápida.</p><p><button class="btn claro" type="button" data-v="lista">Ver as táticas</button></p></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="minha">
+    ${picks.map(t => `<div class="mesa"><h2>${esc(t.nome)}</h2><p class="quando">${esc(t.quando)}</p>
+      ${t.falas.map(f => `<p class="fala">${esc(f)}</p>`).join("")}
+      ${S.notes[t.id] ? `<p class="nota">${esc(S.notes[t.id])}</p>` : ""}</div>`).join("")}
+    <div class="bloco">
+      <h2>Depois da reunião</h2>
+      <p style="color:var(--muted);font-size:16px">Qual tática você usou? O que aconteceu?</p>
+      <textarea id="debrief">${esc(S.debrief)}</textarea>
+      <p class="salvo" id="salvo2"></p>
+      <p style="margin-top:14px"><button class="btn claro" type="button" id="limpar">Limpar seleção</button></p>
+    </div></div>`;
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button, a");
+  if (!b) return;
+  if (b.dataset.open) { renderDetalhe(T.find(t => t.id === b.dataset.open), "mesa"); return; }
+  if (b.dataset.pick) {
+    const id = b.dataset.pick, i = S.picks.indexOf(id);
+    if (i >= 0) S.picks.splice(i, 1); else S.picks.push(id);
+    save();
+    document.querySelectorAll(`[data-pick="${id}"]`).forEach(x => x.setAttribute("aria-pressed", String(i < 0)));
+    return;
+  }
+  if (b.dataset.modo) {
+    document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    $("#p-mesa").classList.toggle("on", b.dataset.modo === "mesa");
+    $("#p-estudo").classList.toggle("on", b.dataset.modo === "estudo");
+    return;
+  }
+  if (b.dataset.video) {
+    b.parentElement.innerHTML = `<iframe src="https://app.heygen.com/embeds/${b.dataset.video}" title="${b.dataset.t}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    return;
+  }
+  if (b.dataset.v) { renderLista(); if (b.dataset.v === "minha") renderMinha(); show(b.dataset.v); return; }
+  if (b.id === "back") { renderLista(); show("lista"); return; }
+  if (b.id === "limpar") { S.picks = []; S.debrief = ""; save(); renderMinha(); return; }
+});
+
+let timer;
+document.addEventListener("input", e => {
+  if (e.target.id === "nota" && atual) { S.notes[atual.id] = e.target.value; $("#salvo").textContent = "Salvando…"; }
+  else if (e.target.id === "debrief") { S.debrief = e.target.value; $("#salvo2").textContent = "Salvando…"; }
+  else return;
+  clearTimeout(timer);
+  timer = setTimeout(() => { save(); const s = $("#salvo") || $("#salvo2"); if (s) s.textContent = "Salvo neste aparelho."; }, 500);
+});
+
+renderLista();
+</script>
+</body>
+</html>
